@@ -1,4 +1,5 @@
 from libro import Libro, LibroDigital
+import libro
 class Biblioteca:
     def __init__(self):
         self.libros = []
@@ -10,9 +11,8 @@ class Biblioteca:
         if not self.libros:
             print("No hay libros en la biblioteca.")
             return
-        for libro in self.libros:
-            print(libro)
-
+        for i, libro in enumerate(self.libros, start=1):
+            print(f"{i}. {libro}")
     def buscar_libro(self, titulo):
         for libro in self.libros:
             if libro.titulo == titulo:
@@ -27,41 +27,75 @@ class Biblioteca:
         return False
 
     def marcar_como_prestado(self, titulo):
-        libro = self.buscar_libro(titulo)
-        if libro is None:
-            raise ValueError("Libro no encontrado")
-        libro.libro_prestado()
-
+        for libro in self.libros:
+            if libro.titulo.lower() == titulo.lower():
+                if libro.disponible:
+                    libro.disponible = False
+                    print(f"El libro '{titulo}' ha sido marcado como prestado.")
+                    return
+                else:
+                    print(f"El libro '{titulo}' ya está prestado.")
+                    return
+        raise ValueError(f"No se encontró el libro '{titulo}' en la biblioteca.")
     def devolver_libro(self, titulo):
-        libro = self.buscar_libro(titulo)
-        if libro is None:
-            raise ValueError("Libro no encontrado")
-        libro.devolver()
+        for libro in self.libros:
+            if libro.titulo.lower() == titulo.lower():
+                if not libro.disponible:
+                    libro.disponible = True
+                    print(f"El libro '{titulo}' ha sido devuelto exitosamente.")
+                    return
+                else:
+                    print(f"El libro '{libro.titulo}' no está prestado.")
+                    return
+        raise ValueError(f"No se encontró el libro '{titulo}' en la biblioteca.")
+    
 
     def cargar_libros_desde_archivo(self, nombre_archivo='biblioteca.txt'):
         try:
             with open(nombre_archivo, 'r', encoding='utf-8') as archivo:
                 for linea in archivo:
                     linea = linea.strip()
+                    if not linea:
+                        continue
                     partes = linea.split('|')
-                    if len(partes) == 4:
-                        titulo, autor, ano_publicacion, formato = partes
-                        if formato:
-                            libro = LibroDigital(titulo, autor, int(ano_publicacion), formato)
-                        else:
-                            libro = Libro(titulo, autor, int(ano_publicacion))
-                        self.agregar_libro(libro)
+                    titulo = partes[0]
+                    autor = partes[1]
+                    ano = int(partes[2])
+                    estado = partes[3].strip() == "disponible"  # True si disponible, False si prestado
+                    tipo = partes[4]
+
+                    if tipo == "Digital":
+                        formato = partes[5] if len(partes) > 5 else "PDF"
+                        libro = LibroDigital(titulo, autor, ano, formato)
                     else:
-                        print(f"Formato de línea inválido: {linea}")
+                        libro = Libro(titulo, autor, ano)
+
+                    libro.disponible = estado
+                    self.libros.append(libro)
+
         except FileNotFoundError:
-            print(f"El archivo {nombre_archivo} no existe.")
+            self.libros = []
+        except Exception as e:
+            print(f"Error al cargar los libros: {e}")
 
     def guardar_libros_en_archivo(self, nombre_archivo='biblioteca.txt'):
         try:
             with open(nombre_archivo, 'w', encoding='utf-8') as archivo:
                 for libro in self.libros:
-                    archivo.write(str(libro) + '\n')
-            print(f"Libros guardados en el archivo {nombre_archivo}.")
+                    estado = "Disponible" if libro.disponible else "Prestado"
+
+                    if isinstance(libro, LibroDigital):
+                        # Libro digital: incluye formato
+                        linea = f"{libro.titulo}|{libro.autor}|{libro.ano_publicacion}|{estado}|Digital|{libro.formato}"
+                    else:
+                        # Libro físico: no tiene formato
+                        linea = f"{libro.titulo}|{libro.autor}|{libro.ano_publicacion}|{estado}|Físico"
+
+                    archivo.write(linea + '\n')
+
+            print(f"Libros guardados correctamente en {nombre_archivo}.")
+
+        except IOError:
+            print(f"No se pudo guardar en el archivo {nombre_archivo}.")
         except Exception as e:
-            print(f"Error al guardar libros en el archivo {nombre_archivo}: {e}")
- 
+            print(f"Ocurrió un error inesperado: {e}")

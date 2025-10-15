@@ -74,8 +74,8 @@ def devolver_libro(biblioteca):
 
 def main():
     biblioteca = Biblioteca()
-    biblioteca.cargar_libros_desde_archivo('biblioteca.txt')
-    
+    biblioteca.cargar_libros_desde_archivo()
+
     while True:
         menu()
         opcion = input("Seleccione una opción: ").strip()
@@ -95,7 +95,7 @@ def main():
             devolver_libro(biblioteca)
         elif opcion == '7':
             print("Guardando cambios y saliendo...")
-            biblioteca.guardar_en_archivo('biblioteca.txt')
+            biblioteca.guardar_libros_en_archivo('biblioteca.txt')
             break
         else:
             print("Opción no válida. Por favor elige entre 1 y 7.")
