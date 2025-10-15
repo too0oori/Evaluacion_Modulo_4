@@ -15,6 +15,9 @@ def menu():
 def agregar_libro(biblioteca):
     print("\n--AGREGAR LIBRO--:")
     tipo = input("¿Es un libro digital? (s/n): ").strip().lower()
+    if tipo not in ['s', 'n']:
+        print("Opción no válida. Por favor elige 's' o 'n'.")
+        return
     titulo = input("Título: ")
     autor = input("Autor: ")
     ano_publicacion = input("Año de publicación: ")

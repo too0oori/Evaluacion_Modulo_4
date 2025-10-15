@@ -50,7 +50,7 @@ class Biblioteca:
         raise ValueError(f"No se encontró el libro '{titulo}' en la biblioteca.")
     
 
-    def cargar_libros_desde_archivo(self, nombre_archivo='biblioteca.txt'):
+    def cargar_libros_desde_archivo(self, nombre_archivo='gestor_biblioteca/biblioteca.txt'):
         try:
             with open(nombre_archivo, 'r', encoding='utf-8') as archivo:
                 for linea in archivo:
@@ -78,7 +78,7 @@ class Biblioteca:
         except Exception as e:
             print(f"Error al cargar los libros: {e}")
 
-    def guardar_libros_en_archivo(self, nombre_archivo='biblioteca.txt'):
+    def guardar_libros_en_archivo(self, nombre_archivo='gestor_biblioteca/biblioteca.txt'):
         try:
             with open(nombre_archivo, 'w', encoding='utf-8') as archivo:
                 for libro in self.libros:
