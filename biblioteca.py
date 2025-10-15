@@ -7,6 +7,9 @@ class Biblioteca:
         self.libros.append(libro)
 
     def mostrar_libros(self):
+        if not self.libros:
+            print("No hay libros en la biblioteca.")
+            return
         for libro in self.libros:
             print(libro)
 
@@ -35,27 +38,30 @@ class Biblioteca:
             raise ValueError("Libro no encontrado")
         libro.devolver()
 
-    def cargar_libros_desde_archivo(self, nombre_archivo):
-        import json
-        with open(nombre_archivo, 'r') as archivo:
-            datos = json.load(archivo)
-            for item in datos:
-                if 'formato' in item:
-                    libro = LibroDigital(item['titulo'], item['autor'], item['ano_publicacion'], item['formato'])
-                else:
-                    libro = Libro(item['titulo'], item['autor'], item['ano_publicacion'])
-                libro.disponible = item.get('disponible', True)
-                self.agregar_libro(libro)
-
-    def guardar_libros_en_archivo(self, nombre_archivo='biblioteca.txt'):
+    def cargar_libros_desde_archivo(self, nombre_archivo='biblioteca.txt'):
         try:
             with open(nombre_archivo, 'r', encoding='utf-8') as archivo:
                 for linea in archivo:
-                    print(linea.strip())
+                    linea = linea.strip()
+                    partes = linea.split('|')
+                    if len(partes) == 4:
+                        titulo, autor, ano_publicacion, formato = partes
+                        if formato:
+                            libro = LibroDigital(titulo, autor, int(ano_publicacion), formato)
+                        else:
+                            libro = Libro(titulo, autor, int(ano_publicacion))
+                        self.agregar_libro(libro)
+                    else:
+                        print(f"Formato de línea inválido: {linea}")
         except FileNotFoundError:
             print(f"El archivo {nombre_archivo} no existe.")
 
-    def guardar_en_archivo(self, nombre_archivo='biblioteca.txt'):
-        with open(nombre_archivo, 'w', encoding='utf-8') as archivo:
-            for libro in self.libros:
-                archivo.write(str(libro) + '\n')
+    def guardar_libros_en_archivo(self, nombre_archivo='biblioteca.txt'):
+        try:
+            with open(nombre_archivo, 'w', encoding='utf-8') as archivo:
+                for libro in self.libros:
+                    archivo.write(str(libro) + '\n')
+            print(f"Libros guardados en el archivo {nombre_archivo}.")
+        except Exception as e:
+            print(f"Error al guardar libros en el archivo {nombre_archivo}: {e}")
+ 
