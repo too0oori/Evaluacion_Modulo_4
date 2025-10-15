@@ -1,5 +1,6 @@
 from libro import Libro, LibroDigital
 import libro
+import os
 class Biblioteca:
     def __init__(self):
         self.libros = []
@@ -50,9 +51,12 @@ class Biblioteca:
         raise ValueError(f"No se encontró el libro '{titulo}' en la biblioteca.")
     
 
-    def cargar_libros_desde_archivo(self, nombre_archivo='gestor_biblioteca/biblioteca.txt'):
+    def cargar_libros_desde_archivo(self, nombre_archivo='biblioteca.txt'):
+        ruta_actual = os.path.dirname(os.path.abspath(__file__))
+        ruta_archivo = os.path.join(ruta_actual, nombre_archivo)
+
         try:
-            with open(nombre_archivo, 'r', encoding='utf-8') as archivo:
+            with open(ruta_archivo, 'r', encoding='utf-8') as archivo:
                 for linea in archivo:
                     linea = linea.strip()
                     if not linea:
@@ -78,9 +82,12 @@ class Biblioteca:
         except Exception as e:
             print(f"Error al cargar los libros: {e}")
 
-    def guardar_libros_en_archivo(self, nombre_archivo='gestor_biblioteca/biblioteca.txt'):
+    def guardar_libros_en_archivo(self, nombre_archivo='biblioteca.txt'):
+        ruta_actual = os.path.dirname(os.path.abspath(__file__))
+        ruta_archivo = os.path.join(ruta_actual, nombre_archivo)
+    
         try:
-            with open(nombre_archivo, 'w', encoding='utf-8') as archivo:
+            with open(ruta_archivo, 'w', encoding='utf-8') as archivo:
                 for libro in self.libros:
                     estado = "Disponible" if libro.disponible else "Prestado"
 
