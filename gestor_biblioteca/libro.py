@@ -16,7 +16,11 @@ class Libro:
         self.disponible = False
     
     def devolver(self):
-        self.disponible = True
+        if not self.disponible:
+            self.disponible = True
+            return True  # Devuelto exitosamente
+        else:
+            return False  # Ya estaba disponible
 
 class LibroDigital(Libro):
     def __init__(self, titulo, autor, ano_publicacion, formato):

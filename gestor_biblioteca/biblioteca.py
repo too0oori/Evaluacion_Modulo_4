@@ -41,8 +41,7 @@ class Biblioteca:
     def devolver_libro(self, titulo):
         for libro in self.libros:
             if libro.titulo.lower() == titulo.lower():
-                if not libro.disponible:
-                    libro.disponible = True
+                if libro.devolver():
                     print(f"El libro '{titulo}' ha sido devuelto exitosamente.")
                     return
                 else:
